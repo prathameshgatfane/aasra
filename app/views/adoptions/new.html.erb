@@ -1,0 +1,78 @@
+<!-- Header -->
+<header class="bg-teal-soft py-5">
+  <div class="container text-center">
+    <h1 class="fw-bold display-5">Adoption Application</h1>
+    <p class="lead mt-3">We’re thrilled you’re considering giving a loving home to one of our animals!</p>
+  </div>
+</header>
+
+<!-- Adoption Form -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="card shadow-sm p-4 border-0">
+      <h2 class="mb-4 text-center text-teal">Request Adoption</h2>
+
+      <%= form_with(model: @rescue, local: true) do |f| %>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <%= f.label :shelter_id, "Shelter", class: "form-label" %>
+                <%= f.collection_select :shelter_id, Shelter.all, :id, :name,
+                    { prompt: "Select Shelter" },
+                    { class: "form-select", id: "shelter-select" } %>
+            </div>
+            
+            <div class="col-md-6">
+                <%= f.label :animal_id, "Animal", class: "form-label" %>
+                <%= f.select :animal_id, [], { prompt: "Select Animal" },
+                    { class: "form-select", id: "animal-select" } %>
+            </div>
+
+            <div class="col-md-6">
+                <%= f.label :reason, "Why do you want to adopt?", class: 'form-label' %>
+                <%= f.text_area :reason, class: "form-control", rows: 3 %>
+            </div>
+
+            <div class="col-md-6">
+                <%= f.label :description, "Tell us about your home (other pets, yard, kids, etc.)", class: 'form-label' %>
+                <%= f.text_area :description, class: "form-control", rows: 4 %>
+            </div>
+            <div class="col-md-6">
+                <%= f.label :status, class: 'form-label' %>
+                <%= f.select :status, AdoptionRequest.statuses.keys.map { |k| [k.titleize, k] }, { prompt: "Select Status" }, { class: "form-select" } %>
+            </div>
+            <div class="text-center mt-4">
+                <%= f.submit "Submit Adoption Request", class: "btn btn-teal px-5 py-2" %>
+            </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%= javascript_tag do %>
+    document.addEventListener("DOMContentLoaded", () => {
+      const shelterSelect = document.getElementById("shelter-select");
+      const animalSelect = document.getElementById("animal-select");
+  
+      shelterSelect.addEventListener("change", () => {
+        const shelterId = shelterSelect.value;
+  
+        // Clear animal select
+        animalSelect.innerHTML = '<option value="">Select Animal</option>';
+  
+        if (shelterId) {
+          fetch(`/shelters/${shelterId}/animals`)
+            .then(response => response.json())
+            .then(data => {
+              data.forEach(animal => {
+                const option = document.createElement("option");
+                option.value = animal.id;
+                option.textContent = animal.name;
+                animalSelect.appendChild(option);
+              });
+            });
+        }
+      });
+    });
+<% end %>
+  

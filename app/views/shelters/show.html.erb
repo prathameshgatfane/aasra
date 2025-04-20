@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <h1 class="text-center"><%= @shelter.name %></h1>
+  <p class="text-center"><%= @shelter.address %></p>
+  <div class="text-center">
+    <img src="" alt="<%= @shelter.name %>" class="img-fluid" style="max-width: 400px;">
+  </div>
+
+  <div class="mt-4">
+    <h3>Rescue Records</h3>
+    <div class="list-group">
+    <% @rescues_records.each do |rescue_r| %>
+        <div class="list-group-item">
+          <div class="row">
+            <div class="col-md-2">
+              <img src="<%#= rescue_r.image_url %>" alt="<%= rescue_r.user.email %>" class="img-thumbnail">
+            </div>
+            <div class="col-md-8">
+              <h5><%= rescue_r.user.email %></h5>
+              <p><strong>Rescue Date:</strong> <%= rescue_r.created_at %></p>
+              <p><strong>Breed:</strong> <%= rescue_r.breed.name %>
+              <p><strong>Category:</strong> <%= rescue_r.category.name %></p>
+              <p><strong>Status:</strong> <%= rescue_r.status %></p>
+            </div>
+            <div class="col-md-2 text-right">
+              <%#= link_to 'Edit', edit_rescue_path(rescue_r), class: 'btn btn-warning' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <!-- Button to Add New Rescue -->
+  <div class="text-center mt-4">
+    <%= link_to 'Add New Rescue', new_rescue_path(shelter_id: @shelter.id), class: 'btn btn-primary' %>
+  </div>
+</div>

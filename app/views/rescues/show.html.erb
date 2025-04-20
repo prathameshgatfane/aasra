@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="row g-0">
+      <% if @rescue.image.present? %>
+        <div class="col-md-5">
+          <%= image_tag @rescue.image, class: "img-fluid rounded-start w-100 h-100 object-fit-cover" %>
+        </div>
+      <% end %>
+
+      <div class="col-md-7">
+        <div class="card-body">
+          <h3 class="card-title mb-3">Rescue Details</h3>
+
+          <p><strong>Description:</strong> <%= @rescue.description %></p>
+          <p><strong>Location:</strong> <%= @rescue.location %></p>
+          <p><strong>Status:</strong> <%= @rescue.status.titleize %></p>
+          <p><strong>Category:</strong> <%= @rescue.category.name if @rescue.category %></p>
+          <p><strong>Breed:</strong> <%= @rescue.breed.name if @rescue.breed %></p>
+          <p><strong>Reported by:</strong> <%#= @rescue.user.name if @rescue.user %></p>
+          <p><strong>Created At:</strong> <%= @rescue.created_at.strftime("%B %d, %Y %l:%M %p") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <%= link_to "Back", rescues_path, class: "btn btn-secondary" %>
+    <%= link_to "Edit", edit_rescue_path(@rescue), class: "btn btn-primary" %>
+    <%= link_to "Delete", @rescue, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+</div>

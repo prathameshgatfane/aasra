@@ -1,0 +1,91 @@
+<!-- Header -->
+<header class="bg-orange-soft py-5">
+<div class="container">
+    <div class="row align-items-center">
+    <div class="col-lg-6">
+        <h1 class="display-5 fw-bold mb-3">Rescue Services</h1>
+        <p class="lead mb-4">We provide professional animal rescue services for pets in distress. Report animals in need, and our team will respond promptly to ensure their safety.</p>
+        <div class="d-flex gap-2">
+        <%= link_to "Report an Animal", new_rescue_path, class: "btn btn-outline-orange" %>
+        </div>
+    </div>
+    <div class="col-lg-6 mt-4 mt-lg-0">
+        <img src="https://images.unsplash.com/photo-1466721591366-2d5fba72006d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Animal rescue" class="img-fluid rounded-3 shadow">
+    </div>
+    </div>
+</div>
+</header>
+
+<!-- Recent Rescues -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Rescue Stories</h2>
+        <div class="row g-4">
+            <% @rescues.each do |rescuee| %>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=640&q=80" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Rescued dog">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title"><%= "#{rescuee.category.name} #{rescuee.breed.name}" %></h3>
+                                    <p class="card-text"><%= rescuee.description %></p>
+                                    <p class="card-text"><small class="text-muted"><%= "#{rescuee.age} #{rescuee.size}" %></small></p>
+                                    <span class="badge bg-success-soft text-success"><%= rescuee.location %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% end %>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="success-stories.html" class="btn btn-outline-teal">View More Success Stories</a>
+    </div>
+</section>
+
+
+<!-- Our Rescue Services -->
+<section class="py-5 bg-light">
+<div class="container">
+    <h2 class="text-center mb-5">Rescues Services</h2>
+    <div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+            <div class="bg-teal-soft p-3 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-telephone-fill text-teal fs-1"></i>
+            </div>
+            <h3 class="h4 mb-3">Emergency Response</h3>
+            <p class="text-muted">24/7 emergency response team ready to rescue animals in immediate danger or distress.</p>
+        </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+            <div class="bg-orange-soft p-3 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-heart-pulse-fill text-orange fs-1"></i>
+            </div>
+            <h3 class="h4 mb-3">Medical Care</h3>
+            <p class="text-muted">Professional veterinary care for rescued animals, including emergency treatment and rehabilitation.</p>
+        </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+            <div class="bg-purple-soft p-3 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-house-heart-fill text-purple fs-1"></i>
+            </div>
+            <h3 class="h4 mb-3">Rehabilitation</h3>
+            <p class="text-muted">Compassionate rehabilitation services to help animals recover and prepare for adoption.</p>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+</section>

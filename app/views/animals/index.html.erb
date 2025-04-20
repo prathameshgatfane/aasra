@@ -1,0 +1,17 @@
+<h2>Available Animals</h2>
+<div class="row">
+  <% @animals.each do |animal| %>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5><%= animal.name %> (<%= animal.age %> years)</h5>
+          <p><strong>Breed:</strong> <%= animal.breed.name %></p>
+          <p><strong>Category:</strong> <%= animal.category.name %></p>
+          <p><strong>Shelter:</strong> <%= animal.shelter.name %></p>
+          <p><span class="badge bg-success"><%= animal.adoption_status.humanize %></span></p>
+          <%= link_to "View", animal_path(animal), class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
