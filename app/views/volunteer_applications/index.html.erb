@@ -1,0 +1,32 @@
+<div class="container py-5">
+  <h1 class="mb-4">Volunteer Applications</h1>
+
+  <% if @applications.any? %>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Interest Area</th>
+          <th>Message</th>
+          <th>Submitted At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @applications.each do |app| %>
+          <tr>
+            <td><%= app.name %></td>
+            <td><%= app.email %></td>
+            <td><%= app.phone %></td>
+            <td><%= app.interest_area %></td>
+            <td><%= app.message %></td>
+            <td><%= app.created_at.strftime("%b %d, %Y %H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No volunteer applications submitted yet.</p>
+  <% end %>
+</div>

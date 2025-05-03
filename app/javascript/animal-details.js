@@ -103,8 +103,8 @@ function renderAnimalDetails(animal) {
           <img src="${animal.image}" alt="${animal.name}" class="img-fluid w-100" style="height: 400px; object-fit: cover;">
         </div>
         <div class="mt-3 d-flex flex-wrap gap-2">
-          <button class="btn btn-outline-orange d-flex align-items-center gap-2">
-            <i class="bi bi-heart"></i> Add to Favorites
+          <button class="btn btn-outline-orange d-flex align-items-center gap-2" id="wishlist-button">
+            <i class="bi bi-heart" id="wishlist-heart-icon"></i> Add to Wishlist
           </button>
           <button class="btn btn-outline-teal d-flex align-items-center gap-2">
             <i class="bi bi-share"></i> Share
@@ -184,75 +184,47 @@ function renderAnimalDetails(animal) {
       </div>
     </div>
   `;
+
+  // Wishlist button functionality
+  const wishlistButton = document.getElementById('wishlist-button');
+  const wishlistHeartIcon = document.getElementById('wishlist-heart-icon');
+  
+  wishlistButton.addEventListener('click', function() {
+    if (wishlistHeartIcon.classList.contains('bi-heart-fill')) {
+      wishlistHeartIcon.classList.remove('bi-heart-fill');
+      wishlistHeartIcon.classList.add('bi-heart');
+      wishlistButton.textContent = 'Add to Wishlist';
+    } else {
+      wishlistHeartIcon.classList.remove('bi-heart');
+      wishlistHeartIcon.classList.add('bi-heart-fill');
+      wishlistButton.textContent = 'Remove from Wishlist';
+    }
+  });
 }
 
-function renderRelatedAnimals(relatedAnimals) {
-  const container = document.getElementById('related-animals');
+function renderRelatedAnimals(animals) {
+  const container = document.getElementById('related-animals-container');
   
-  if (relatedAnimals.length === 0) {
-    document.querySelector('.py-5.bg-light').style.display = 'none';
-    return;
-  }
-  
-  relatedAnimals.forEach(animal => {
-    const animalCard = document.createElement('div');
-    animalCard.className = 'col-md-4';
-    animalCard.innerHTML = `
-      <div class="card h-100 shadow-sm border-0 animal-card">
-        <div class="animal-image-container" style="height: 200px;">
-          <img src="${animal.image}" alt="${animal.name}" class="animal-image">
-          <span class="badge badge-species position-absolute">${animal.species}</span>
-        </div>
-        
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h3 class="h5 fw-semibold mb-0">${animal.name}</h3>
-              <p class="text-secondary small mb-0">${animal.breed}</p>
-            </div>
-            <span class="badge border badge-gender">${animal.gender}</span>
-          </div>
-          
-          <div class="d-flex flex-column gap-1 mt-3">
-            <div class="d-flex align-items-center text-secondary small">
-              <i class="bi bi-calendar me-2"></i>
-              <span>${animal.age}</span>
-            </div>
-            
-            <div class="d-flex align-items-center text-secondary small">
-              <i class="bi bi-geo-alt me-2"></i>
-              <span>${animal.location}</span>
+  container.innerHTML = `
+    <h3 class="h5 fw-semibold">Related Animals</h3>
+    <div class="row g-4">
+      ${animals.map(animal => `
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="card shadow-sm rounded">
+            <img src="${animal.image}" class="card-img-top" alt="${animal.name}">
+            <div class="card-body">
+              <h5 class="card-title">${animal.name}</h5>
+              <p class="card-text">${animal.breed}</p>
+              <a href="animal-details.html?id=${animal.id}" class="btn btn-teal stretched-link">View Details</a>
             </div>
           </div>
         </div>
-        
-        <div class="card-footer bg-white border-top-0 pt-0">
-          <a href="animal-details.html?id=${animal.id}" class="btn btn-outline-teal w-100">
-            View Details
-          </a>
-        </div>
-      </div>
-    `;
-    container.appendChild(animalCard);
-  });
+      `).join('')}
+    </div>
+  `;
 }
 
 function renderAnimalNotFound() {
   const container = document.getElementById('animal-details-container');
-  
-  container.innerHTML = `
-    <div class="text-center py-5">
-      <div class="mb-4">
-        <i class="bi bi-emoji-frown text-secondary" style="font-size: 4rem;"></i>
-      </div>
-      <h2 class="h3 mb-3">Animal Not Found</h2>
-      <p class="text-secondary mb-4">The animal you're looking for could not be found or may have been adopted.</p>
-      <a href="adopt.html" class="btn btn-teal text-white">
-        Browse Available Animals
-      </a>
-    </div>
-  `;
-  
-  // Hide related section
-  document.querySelector('.py-5.bg-light').style.display = 'none';
+  container.innerHTML = '<h3 class="text-center">Animal not found</h3>';
 }

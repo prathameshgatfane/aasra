@@ -1,49 +1,53 @@
 <!-- Filter Section -->
 <section id="filter-section" class="py-5">
-<div class="container">
+  <div class="container">
     <h2 class="text-center mb-4">Find Your Perfect Match</h2>
-    <div class="row g-3">
-    <div class="col-md-3">
-        <select class="form-select">
-        <option selected>Animal Type</option>
-        <option value="dog">Dogs</option>
-        <option value="cat">Cats</option>
-        <option value="rabbit">Rabbits</option>
-        <option value="other">Other</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select class="form-select">
-        <option selected>Age</option>
-        <option value="baby">Baby</option>
-        <option value="young">Young</option>
-        <option value="adult">Adult</option>
-        <option value="senior">Senior</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select class="form-select">
-        <option selected>Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select class="form-select">
-        <option selected>Size</option>
-        <option value="small">Small</option>
-        <option value="medium">Medium</option>
-        <option value="large">Large</option>
-        <option value="xlarge">Extra Large</option>
-        </select>
-    </div>
-    <div class="col-12 text-center mt-3">
-        <button class="btn btn-teal px-4"><i class="bi bi-search me-2"></i>Search</button>
-    </div>
-    </div>
-</div>
+
+    <%= form_with url: adoptions_path, method: :get, local: true do %>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= select_tag :type, options_for_select([
+            ["Animal Type", ""],
+            ["Dog", "dog"],
+            ["Cat", "cat"],
+            ["Rabbit", "rabbit"],
+            ["Other", "other"]
+          ], selected: params[:type]), class: "form-select" %>
+        </div>
+        <div class="col-md-3">
+          <%= select_tag :age, options_for_select([
+            ["Age", ""],
+            ["Baby", "baby"],
+            ["Young", "young"],
+            ["Adult", "adult"],
+            ["Senior", "senior"]
+          ], selected: params[:age]), class: "form-select" %>
+        </div>
+        <div class="col-md-3">
+          <%= select_tag :gender, options_for_select([
+            ["Gender", ""],
+            ["Male", "male"],
+            ["Female", "female"]
+          ], selected: params[:gender]), class: "form-select" %>
+        </div>
+        <div class="col-md-3">
+          <%= select_tag :size, options_for_select([
+            ["Size", ""],
+            ["Small", "small"],
+            ["Medium", "medium"],
+            ["Large", "large"],
+            ["Extra Large", "extra_large"]
+          ], selected: params[:size]), class: "form-select" %>
+        </div>
+        <div class="col-12 text-center mt-3">
+          <%= submit_tag "Search", class: "btn btn-teal px-4" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </section>
 
+<!-- Animals Section -->
 <section class="py-5 bg-light">
   <div class="container">
     <section class="py-5 bg-white">
@@ -60,35 +64,35 @@
             <div class="col-md-6 col-lg-3">
               <div class="card h-100 shadow-sm border-0 animal-card">
                 <div class="animal-image-container">
-                  <img src="<%#= animal.image %>" alt="<%= animal.name %>" class="animal-image">
-                  <span class="badge badge-species position-absolute"><%= animal.category.name %></span>
+                  <%= image_tag animal.image, alt: animal.name, class: "animal-image" if animal.image.present? %>
+                  <span class="badge badge-species position-absolute"><%= animal.category&.name || "Unknown" %></span>
                 </div>
 
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
                       <h3 class="h5 fw-semibold mb-0"><%= animal.name %></h3>
-                      <p class="text-secondary small mb-0"><%= animal.breed.name %></p>
+                      <p class="text-secondary small mb-0"><%= animal.breed&.name || "Unknown" %></p>
                     </div>
-                    <span class="badge border badge-gender"><%= animal.gender %></span>
+                    <span class="badge border badge-gender"><%= animal.gender&.capitalize || "Unknown" %></span>
                   </div>
 
                   <div class="d-flex align-items-center mt-3 text-secondary small">
-                    <i class="bi bi-calendar me-2"></i><span><%= animal.age %></span>
+                    <i class="bi bi-calendar me-2"></i><span><%= animal.age&.capitalize || "Unknown" %></span>
                   </div>
 
                   <div class="d-flex align-items-center mt-3 text-secondary small">
-                    <i class="bi bi-calendar me-2"></i><span><%= animal.size %></span>
+                    <i class="bi bi-arrows-angle-expand me-2"></i><span><%= animal.size&.capitalize&.gsub('_', ' ') || "Unknown" %></span>
+                  </div>
+
+                  <div class="d-flex align-items-center mt-1 text-secondary small">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span><%= animal.adoption_status&.to_s&.capitalize || "Unknown" %></span>
                   </div>
 
                   <div class="d-flex align-items-center mt-1 text-secondary small">
                     <i class="bi bi-geo-alt me-2"></i>
-                    <span><%= animal.adoption_status.to_s %></span>
-                  </div>
-
-                  <div class="d-flex align-items-center mt-1 text-secondary small">
-                    <i class="bi bi-geo-alt me-2"></i>
-                    <span><%= animal.shelter.name %></span>
+                    <span><%= animal.shelter&.name || "Unknown" %></span>
                   </div>
 
                   <% if animal.tags.any? %>
@@ -102,7 +106,7 @@
 
                 <div class="card-footer bg-white border-top-0 pt-0">
                   <div class="d-flex gap-2">
-                    <%= link_to 'Request Adoption', new_adoption_path, class: "btn btn-teal text-white flex-grow-1" %>
+                    <%= link_to "Request Adoption", new_adoption_path(animal_id: animal.id), class: "btn btn-teal text-white flex-grow-1" %>
                     <button class="btn btn-outline-orange favorite-btn" data-id="<%= animal.id %>">
                       <i class="bi bi-heart"></i>
                     </button>
@@ -112,53 +116,57 @@
             </div>
           <% end %>
         </div>
+
+        <!-- Pagination -->
+        <div class="mt-4 d-flex justify-content-center">
+          <%= paginate @animals %>
+        </div>
       </div>
     </section>
   </div>
 </section>
 
-
 <!-- Adoption Process -->
 <section class="py-5">
-<div class="container">
+  <div class="container">
     <h2 class="text-center mb-5">The Adoption Process</h2>
     <div class="row g-4">
-    <div class="col-md-3">
+      <div class="col-md-3">
         <div class="card h-100 border-0 shadow-sm text-center">
-        <div class="card-body">
+          <div class="card-body">
             <div class="display-4 text-teal mb-3">1</div>
             <h3 class="h5">Browse Available Pets</h3>
             <p class="text-muted">Look through our available animals to find your perfect match.</p>
+          </div>
         </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+      </div>
+      <div class="col-md-3">
         <div class="card h-100 border-0 shadow-sm text-center">
-        <div class="card-body">
+          <div class="card-body">
             <div class="display-4 text-teal mb-3">2</div>
             <h3 class="h5">Submit Application</h3>
             <p class="text-muted">Fill out our adoption application form with your information.</p>
+          </div>
         </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+      </div>
+      <div class="col-md-3">
         <div class="card h-100 border-0 shadow-sm text-center">
-        <div class="card-body">
+          <div class="card-body">
             <div class="display-4 text-teal mb-3">3</div>
             <h3 class="h5">Meet & Greet</h3>
             <p class="text-muted">Schedule a visit to meet your potential new family member.</p>
+          </div>
         </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+      </div>
+      <div class="col-md-3">
         <div class="card h-100 border-0 shadow-sm text-center">
-        <div class="card-body">
+          <div class="card-body">
             <div class="display-4 text-teal mb-3">4</div>
             <h3 class="h5">Take Home</h3>
             <p class="text-muted">Complete the adoption process and welcome your pet home!</p>
+          </div>
         </div>
-        </div>
+      </div>
     </div>
-    </div>
-</div>
+  </div>
 </section>

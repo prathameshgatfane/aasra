@@ -1,244 +1,110 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+require 'faker'
 
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
-["adopter", "rescuer", "volunteer", "donor", "admin"].each do |role|
-    Role.find_or_create_by(name: role)
+# Clear existing data
+User.destroy_all
+Role.destroy_all
+Category.destroy_all
+Breed.destroy_all
+Shelter.destroy_all
+Animal.destroy_all
+
+# Roles
+roles = ["adopter", "rescuer", "volunteer", "donor", "admin"]
+roles.each do |role|
+  Role.find_or_create_by!(name: role)
 end
 
-['Dog', 'Cat', 'Rabbit', 'Bird', 'Cow'].each do |category|
-    Category.create(name: category)
+# Admin user
+admin_user = User.find_or_initialize_by(email: 'admin@example.com')
+if admin_user.new_record?
+  admin_user.password = 'admin123'
+  admin_user.password_confirmation = 'admin123'
+  admin_user.save!
+end
+admin_user.roles << Role.find_by(name: 'admin') unless admin_user.roles.exists?(name: 'admin')
+
+# Create 20 random users with random roles (excluding admin)
+20.times do
+  user = User.create!(
+    email: Faker::Internet.unique.email,
+    password: 'password',
+    password_confirmation: 'password'
+  )
+  assigned_role = roles.reject { |r| r == 'admin' }.sample
+  user.roles << Role.find_by(name: assigned_role)
 end
 
-dog_breeds = [
-    "Labrador Retriever",
-    "German Shepherd",
-    "Golden Retriever",
-    "Bulldog",
-    "Poodle",
-    "Beagle",
-    "Rottweiler",
-    "Yorkshire Terrier",
-    "Boxer",
-    "Dachshund",
-    "Siberian Husky",
-    "Great Dane",
-    "Doberman Pinscher",
-    "Australian Shepherd",
-    "Shih Tzu",
-    "Border Collie",
-    "Cocker Spaniel",
-    "Pomeranian",
-    "Chihuahua",
-    "French Bulldog"
-  ]
+# Categories and breeds
+category_breeds = {
+  "Dog" => ["Labrador Retriever", "German Shepherd", "Golden Retriever", "Bulldog"],
+  "Cat" => ["Persian", "Siamese", "Maine Coon", "Bengal"],
+  "Rabbit" => ["Holland Lop", "Netherland Dwarf", "Mini Rex"],
+  "Bird" => ["Budgerigar", "Cockatiel", "African Grey Parrot"],
+  "Cow" => ["Gir", "Jersey", "Holstein Friesian"]
+}
 
-dog_breeds.each do |breed|
-    category = Category.find_by_name('Dog')
-    Breed.create(category_id: category.id, name: breed)
+category_breeds.each do |category_name, breeds|
+  category = Category.find_or_create_by!(name: category_name)
+  breeds.each do |breed|
+    Breed.find_or_create_by!(category_id: category.id, name: breed)
+  end
 end
 
-cat_breeds = [
-    "Persian",
-    "Maine Coon",
-    "Siamese",
-    "Ragdoll",
-    "British Shorthair",
-    "Sphynx",
-    "Bengal",
-    "Scottish Fold",
-    "Abyssinian",
-    "Birman",
-    "Oriental Shorthair",
-    "Russian Blue",
-    "Norwegian Forest",
-    "American Shorthair",
-    "Himalayan",
-    "Devon Rex",
-    "Savannah",
-    "Exotic Shorthair",
-    "Tonkinese",
-    "Turkish Angora"
-  ]
-
-cat_breeds.each do |breed|
-    category = Category.find_by_name('Cat')
-    Breed.create(category_id: category.id, name: breed)
-end
-
-rabbit_breeds = [
-  "Holland Lop",
-  "Netherland Dwarf",
-  "Mini Rex",
-  "Lionhead",
-  "Flemish Giant",
-  "English Angora",
-  "Mini Lop",
-  "Dutch",
-  "Rex",
-  "Himalayan",
-  "English Spot",
-  "Harlequin",
-  "Checkered Giant",
-  "American Fuzzy Lop",
-  "Silver Marten",
-  "French Lop",
-  "New Zealand White",
-  "Polish",
-  "Chinchilla",
-  "Satin"
+# Shelters
+shelter_names = [
+  "Paws & Hearts Shelter", "Furry Haven", "Wagging Tails Rescue", "Whisker World", "Snuggle Paws Sanctuary",
+  "Safe Paw Refuge", "The Paw Haven", "Second Chance Paws", "Rescue Roots", "Pawprints of Hope",
+  "Pine Paws Rescue", "Loving Tails Shelter", "Sunshine Fur Home", "Forever Fields Sanctuary", "Maple Tail Manor",
+  "The Bark Side", "Fur Real Friends", "Pawsh Life Rescue", "Meow & Woof Inn", "Rescue Rangers Den"
 ]
 
-rabbit_breeds.each do |breed|
-    category = Category.find_by_name('Rabbit')
-    Breed.create(category_id: category.id, name: breed)
-end
-
-
-bird_breeds = [
-  "Budgerigar (Budgie)",
-  "Cockatiel",
-  "African Grey Parrot",
-  "Lovebird",
-  "Canary",
-  "Finch",
-  "Macaw",
-  "Cockatoo",
-  "Parakeet",
-  "Amazon Parrot",
-  "Conure",
-  "Eclectus",
-  "Quaker Parrot (Monk Parakeet)",
-  "Lorikeet",
-  "Indian Ringneck Parakeet",
-  "Pionus Parrot",
-  "Senegal Parrot",
-  "Green-Cheeked Conure",
-  "Zebra Finch",
-  "Society Finch"
-]
-
-bird_breeds.each do |breed|
-    category = Category.find_by_name('Bird')
-    Breed.create(category_id: category.id, name: breed)
-end
-
-
-cow_breeds = [
-  "Holstein Friesian",
-  "Jersey",
-  "Gir",
-  "Sahiwal",
-  "Red Sindhi",
-  "Ongole",
-  "Tharparkar",
-  "Kankrej",
-  "Hariana",
-  "Rathi",
-  "Khillari",
-  "Deoni",
-  "Amrit Mahal",
-  "Krishna Valley",
-  "Nagori",
-  "Malnad Gidda",
-  "Brahman",
-  "Nelore",
-  "Dexter",
-  "Hereford"
-]
-
-cow_breeds.each do |breed|
-    category = Category.find_by_name('Cow')
-    Breed.create(category_id: category.id, name: breed)
-end
-
-pet_shelter_names = [
-  "Paws & Hearts Shelter",
-  "Furry Haven",
-  "Wagging Tails Rescue",
-  "Whisker World",
-  "Snuggle Paws Sanctuary",
-  "Safe Paw Refuge",
-  "The Paw Haven",
-  "Second Chance Paws",
-  "Rescue Roots",
-  "Pawprints of Hope",
-  "Pine Paws Rescue",
-  "Loving Tails Shelter",
-  "Sunshine Fur Home",
-  "Forever Fields Sanctuary",
-  "Maple Tail Manor",
-  "The Bark Side",
-  "Fur Real Friends",
-  "Pawsh Life Rescue",
-  "Meow & Woof Inn",
-  "Rescue Rangers Den"
-]
-
-pet_shelter_names.each do |name|
-  Shelter.create!(
+shelter_names.each do |name|
+  Shelter.find_or_create_by!(
     name: name,
     address: Faker::Address.full_address,
     phone: Faker::PhoneNumber.phone_number,
-    capacity: 150
+    capacity: 150,
+    user: admin_user
   )
 end
 
+# Sample Animals
 category = Category.find_by_name('Dog')
 breed = category.breeds.first
-breed_id = breed.id
-category_id = category.id
-shelter_id = Shelter.first.id
+shelter = Shelter.first
+
 Animal.create!([
   {
     name: "Max",
-    age: 2,
+    age: :adult,
     gender: :male,
     size: :large,
     adoption_status: :available,
-    breed_id: breed_id,
-    category_id: category_id,  
-    shelter_id: shelter_id,
+    breed_id: breed.id,
+    category_id: category.id,
+    shelter_id: shelter.id,
     tags: ["Friendly", "Energetic", "Loyal"]
   },
   {
     name: "Whiskers",
-    age: 1,
+    age: :young,
     gender: :female,
     size: :small,
     adoption_status: :available,
-    breed_id: breed_id,
-    category_id: category_id,  
-    shelter_id: shelter_id,
-    tags: ["Friendly", "Energetic", "Loyal"]
-  },
-  {
-    name: "Bubbles",
-    age: 0,
-    gender: :female,
-    size: :small,
-    adoption_status: :pending,
-    breed_id: breed_id,
-    category_id: category_id,  
-    shelter_id: shelter_id,
-    tags: ["Friendly", "Energetic", "Loyal"]
-  },
-  {
-    name: "Buddy",
-    age: 4,
-    gender: :male,
-    size: :medium,
-    adoption_status: :adopted,
-    breed_id: breed_id,
-    category_id: category_id,  
-    shelter_id: shelter_id,
-    tags: ["Friendly", "Energetic", "Loyal"]
+    breed_id: breed.id,
+    category_id: category.id,
+    shelter_id: shelter.id,
+    tags: ["Playful", "Cute", "Active"]
   }
 ])
+
+puts "Geocoding shelters..."
+Shelter.find_each do |shelter|
+  shelter.geocode
+  if shelter.latitude.nil? || shelter.longitude.nil?
+    puts "Failed to geocode: #{shelter.name} (#{shelter.address})"
+  else
+    shelter.save!
+    puts "Geocoded: #{shelter.name} => #{shelter.latitude}, #{shelter.longitude}"
+  end
+end

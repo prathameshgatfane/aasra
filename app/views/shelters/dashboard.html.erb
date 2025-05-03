@@ -1,0 +1,19 @@
+<h1 class="mb-4">Shelter Dashboard</h1>
+
+<% if @adoption_requests.any? %>
+  <% @adoption_requests.each do |request| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p><strong>Animal:</strong> <%= request.animal.name %></p>
+        <p><strong>Requested by:</strong> <%= request.user.email %></p>
+
+        <div class="d-flex gap-2">
+          <%= button_to "Accept", accept_adoption_request_path(request), method: :patch, class: "btn btn-success" %>
+          <%= button_to "Reject", reject_adoption_request_path(request), method: :patch, class: "btn btn-danger" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <p>No adoption requests at the moment.</p>
+<% end %>

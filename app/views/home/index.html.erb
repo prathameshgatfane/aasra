@@ -12,12 +12,11 @@
           Whether you want to adopt, volunteer, or donate - you can make a difference.
         </p>
         <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start">
-          <a href="adopt.html" class="btn btn-teal text-white btn-lg">
-            <i class="bi bi-heart me-2"></i> Adopt Now
+        <%= link_to '<i class="bi bi-heart me-2"></i> Adopt Now'.html_safe, adoptions_path, class: "btn btn-teal text-white btn-lg" %>
+
+           <%# <i class="bi bi-heart me-2"></i> Adopt Now %>
           </a>
-          <a href="volunteer.html" class="btn btn-outline-secondary btn-lg">
-            <i class="bi bi-people me-2"></i> Volunteer
-          </a>
+          
         </div>
       </div>
       <div class="col-md-6 d-none d-md-block">
@@ -27,34 +26,31 @@
   </div>
   
   <div class="container-fluid px-0">
-      <div class="row g-0 border-top border-light">
-    
-        <a href="adopt-form.html" class="col-6 col-md-3 p-4 text-center hover-bg-light text-decoration-none text-dark">
-          <i class="bi bi-heart text-orange fs-1 mb-3"></i>
-          <h3 class="h5 fw-semibold">Adopt</h3>
-          <p class="small text-secondary">Find your perfect companion</p>
-        </a>
-    
-        <a href="rescue.html" class="col-6 col-md-3 p-4 text-center border-start hover-bg-light text-decoration-none text-dark">
-          <i class="bi bi-github text-teal fs-1 mb-3"></i>
-          <h3 class="h5 fw-semibold">Rescue</h3>
-          <p class="small text-secondary">Help animals in need</p>
-        </a>
-    
-        <a href="volunteer.html" class="col-6 col-md-3 p-4 text-center border-start hover-bg-light text-decoration-none text-dark">
-          <i class="bi bi-people text-purple fs-1 mb-3"></i>
-          <h3 class="h5 fw-semibold">Volunteer</h3>
-          <p class="small text-secondary">Join our community</p>
-        </a>
-    
-        <a href="donate.html" class="col-6 col-md-3 p-4 text-center border-start hover-bg-light text-decoration-none text-dark">
-          <i class="bi bi-currency-dollar text-success fs-1 mb-3"></i>
-          <h3 class="h5 fw-semibold">Donate</h3>
-          <p class="small text-secondary">Support our mission</p>
-        </a>
-    
-      </div>
-    </div>
+  <div class="row g-0 border-top border-light">
+
+  <%= link_to adoptions_path, class: "col-6 col-md-4 p-4 text-center hover-bg-light text-decoration-none text-dark" do %>
+    <i class="bi bi-heart text-orange fs-1 mb-3"></i>
+    <h3 class="h5 fw-semibold">Adopt</h3>
+    <p class="small text-secondary">Find your perfect companion</p>
+  <% end %>
+  
+
+   <%= link_to rescues_path, class: "col-6 col-md-4 p-4 text-center border-start hover-bg-light text-decoration-none text-dark" do %>
+  <i class="bi bi-github text-teal fs-1 mb-3"></i>
+  <h3 class="h5 fw-semibold">Rescue</h3>
+  <p class="small text-secondary">Help animals in need</p>
+<% end %>
+
+
+    <a href="donate.html" class="col-6 col-md-4 p-4 text-center border-start hover-bg-light text-decoration-none text-dark">
+      <i class="bi bi-currency-dollar text-success fs-1 mb-3"></i>
+      <h3 class="h5 fw-semibold">Donate</h3>
+      <p class="small text-secondary">Support our mission</p>
+    </a>
+
+  </div>
+</div>
+
     
 </section>
 
@@ -73,9 +69,8 @@
     </div>
     
     <div class="text-center mt-5">
-      <a href="adopt.html" class="btn btn-teal btn-lg text-white">
-        See All Animals <i class="bi bi-arrow-right ms-2"></i>
-      </a>
+    <%= link_to "See All Animals <i class='bi bi-arrow-right ms-2'></i>".html_safe, adoptions_path, class: "btn btn-teal btn-lg text-white" %>
+
     </div>
   </div>
 </section>
@@ -186,7 +181,7 @@
             Open your heart and home to an animal in need by adopting a new family member.
           </p>
           <div class="mt-auto">
-            <a href="adopt.html" class="btn btn-outline-teal">Find a Pet</a>
+          <a href="<%= adoptions_path %>" class="btn btn-outline-teal">Find a Pet</a>
           </div>
         </div>
       </div>
@@ -201,7 +196,8 @@
             Help us locate, rescue, and transport animals in need to safety and care.
           </p>
           <div class="mt-auto">
-            <a href="rescue.html" class="btn btn-outline-orange">Report Animal</a>
+          <a href="<%= new_rescue_path %>" class="btn btn-outline-orange">Report Animal</a>
+
           </div>
         </div>
       </div>
@@ -244,9 +240,8 @@
           Sign up today to create your account and start your journey as an adopter, rescuer, volunteer, or donor.
         </p>
         <div>
-          <a href="register.html" class="btn btn-teal btn-lg text-white px-5">
-            Get Started
-          </a>
+        <a href="<%= adoptions_path %>" class="btn btn-teal">Get Started</a>
+
         </div>
       </div>
     </div>

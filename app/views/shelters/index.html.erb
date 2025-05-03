@@ -18,7 +18,7 @@
   </div>
 </header>
 
-<!-- Map Section -->
+<<!-- Map Section -->
 <section id="map-section" class="py-5">
   <div class="container">
     <h2 class="text-center mb-4">Find a Shelter Near You</h2>
@@ -27,25 +27,97 @@
         <div class="bg-light p-3 rounded shadow-sm mb-4">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Enter your zip code">
-            <button class="btn btn-teal">Search</button>
+            <button class="btn btn-teal" id="zip-search-btn">Search</button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Real Leaflet Map -->
     <div class="row">
       <div class="col-12">
-        <!-- Placeholder for a map -->
-        <div class="bg-light rounded shadow-sm" style="height: 400px; display: flex; align-items: center; justify-content: center;">
-          <div class="text-center">
-            <i class="bi bi-map fs-1 text-teal mb-3"></i>
-            <h3 class="h5">Interactive Map</h3>
-            <p class="text-muted">Map will display all shelter locations in our network.</p>
-          </div>
-        </div>
+        <div id="shelter-map" class="rounded shadow-sm" style="height: 400px;"></div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Leaflet Map Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize map
+    var map = L.map('shelter-map').setView([20.5937, 78.9629], 5); // Centered on India
+
+    // Add tile layer from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Example static shelter markers
+    const shelters = [
+      {
+        name: "Mumbai Shelter",
+        lat: 19.0760,
+        lng: 72.8777,
+        address: "Marine Lines, Mumbai"
+      },
+      {
+        name: "Pune Shelter",
+        lat: 18.5204,
+        lng: 73.8567,
+        address: "FC Road, Pune"
+      }
+    ];
+
+    // Loop through and add markers
+    shelters.forEach(function(shelter) {
+      L.marker([shelter.lat, shelter.lng])
+        .addTo(map)
+        .bindPopup(`<strong>${shelter.name}</strong><br>${shelter.address}`);
+    });
+  });
+</script>
+<script>
+  document.getElementById("zip-search-btn").addEventListener("click", function () {
+    const zip = document.querySelector("input[type='text']").value;
+
+    fetch(`/shelters/near/${zip}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        // Clear old markers
+        if (window.shelterMarkers) {
+          window.shelterMarkers.forEach(m => map.removeLayer(m));
+        }
+
+        window.shelterMarkers = [];
+
+        if (data.length > 0) {
+          const first = data[0];
+          map.setView([first.latitude, first.longitude], 11);
+
+          data.forEach(shelter => {
+            const marker = L.marker([shelter.latitude, shelter.longitude])
+              .addTo(map)
+              .bindPopup(`<strong>${shelter.name}</strong><br>${shelter.address}`);
+            window.shelterMarkers.push(marker);
+          });
+        } else {
+          alert("No shelters found nearby.");
+        }
+      })
+      .catch(err => {
+        alert("Error fetching shelters.");
+        console.error(err);
+      });
+  });
+</script>
+
+
 
 <!-- Featured Shelters -->
 

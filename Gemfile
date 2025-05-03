@@ -68,3 +68,6 @@ gem 'cancancan'
 gem 'draper'
 gem 'pundit'
 gem 'faker'
+gem 'geocoder'
+
+gem "kaminari", "~> 1.2"

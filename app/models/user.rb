@@ -8,16 +8,31 @@ class User < ApplicationRecord
   has_many :roles, through: :user_roles
   has_many :rescues
   has_many :adoption_requests
+  has_many :volunteer_applications  # ✅ Add this line
+  has_one :shelter  # Association with shelter
 
-  after_create :assign_default_role
+  # Virtual attribute to capture role selection from form
+  attr_accessor :role_name
 
+  after_create :assign_selected_or_default_role
 
   def has_role?(role_name)
     roles.exists?(name: role_name.to_s)
   end
 
-  def assign_default_role
-    self.roles << Role.find_by(name: "adopter") if roles.empty?
+  def is_shelter?
+    has_role?("shelter")
+  end
+
+  private
+
+  def assign_selected_or_default_role
+    if role_name.present?
+      selected_role = Role.find_by(name: role_name)
+      self.roles << selected_role if selected_role
+    elsif roles.empty?
+      self.roles << Role.find_by(name: "adopter")
+    end
   end
 
   def self.ransackable_associations(auth_object = nil)

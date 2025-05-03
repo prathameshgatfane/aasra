@@ -1,0 +1,32 @@
+.bg-teal-soft {
+    background-color: #e0f7f1;
+  }
+  
+  .btn-teal {
+    background-color: #009688;
+    color: white;
+  }
+  
+  .btn-teal:hover {
+    background-color: #00796b;
+    color: white;
+  }
+  
+  .btn-outline-teal {
+    border: 1px solid #009688;
+    color: #009688;
+  }
+  
+  .btn-outline-teal:hover {
+    background-color: #009688;
+    color: white;
+  }
+  
+  .text-teal {
+    color: #009688;
+  }
+  
+  .hover-text-teal:hover {
+    color: #009688 !important;
+  }
+  

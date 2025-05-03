@@ -1,0 +1,30 @@
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-4 fw-bold text-center">Apply to Volunteer</h2>
+    <%= form_with model: VolunteerApplication.new, url: volunteer_applications_path, local: true, class: "row g-3" do |f| %>
+      <div class="col-md-6">
+        <%= f.label :name, "Full Name" %>
+        <%= f.text_field :name, class: "form-control" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :email %>
+        <%= f.email_field :email, class: "form-control" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :phone %>
+        <%= f.telephone_field :phone, class: "form-control" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :interest_area, "Area of Interest" %>
+        <%= f.select :interest_area, ["Animal Care", "Events", "Admin", "Fostering"], {}, class: "form-control" %>
+      </div>
+      <div class="col-12">
+        <%= f.label :message, "Tell us why you want to volunteer" %>
+        <%= f.text_area :message, rows: 4, class: "form-control" %>
+      </div>
+      <div class="col-12 text-center">
+        <%= f.submit "Submit Application", class: "btn btn-teal px-5" %>
+      </div>
+    <% end %>
+  </div>
+</section>

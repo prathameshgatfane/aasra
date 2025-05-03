@@ -10,3 +10,4 @@ pin "bootstrap", to: 'bootstrap.min.js', preload: true
 pin "aasra", to: 'aasra.js'
 pin "adopt_form", to: 'adopt_form.js'
 pin "animal_details", to: 'animal_details.js'
+pin "animal-details"

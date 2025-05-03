@@ -1,17 +1,91 @@
-// Sass variable overrides must be declared before loading up Active Admin's styles.
-//
-// To view the variables that Active Admin provides, take a look at
-// `app/assets/stylesheets/active_admin/mixins/_variables.scss` in the
-// Active Admin source.
-//
-// For example, to change the sidebar width:
-// $sidebar-width: 242px;
+// active_admin.scss
 
-// Active Admin's got SASS!
+// Import ActiveAdmin default styles
 @import "active_admin/mixins";
 @import "active_admin/base";
+// Import Bootstrap (you need bootstrap installed)
+@import "bootstrap"; // if you installed bootstrap through yarn/npm
+// or if you have your custom bootstrap.scss inside assets
 
-// Overriding any non-variable Sass must be done after the fact.
-// For example, to change the default status-tag color:
-//
-//   .status_tag { background: #6090DB; }
+// Import your custom styles
+@import "admin/custom";
+
+// Reset basic background
+body.active_admin {
+  background: #f7f8fa; // Soft light background
+  font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif; // Match your main site font
+}
+
+// Navbar styling
+#header {
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+  padding: 10px 20px;
+}
+
+#header h1 {
+  font-weight: 600;
+  color: #333;
+}
+
+// Sidebar styling
+#sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
+}
+
+// Main panel
+#main_content {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+// Panel titles
+.panel h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+// Tables inside dashboard
+.index_table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.index_table th, .index_table td {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+// Buttons
+input[type=submit],
+a.button {
+  background-color: #1abc9c; // Teal color like your site
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+input[type=submit]:hover,
+a.button:hover {
+  background-color: #16a085;
+}
+
+// Links
+a {
+  color: #1abc9c;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
