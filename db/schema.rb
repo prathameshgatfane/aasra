@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
+ActiveRecord::Schema[7.2].define(version: 2025_05_06_214821) do
   create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -55,12 +55,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
 
   create_table "admin_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.integer "role"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
@@ -76,6 +81,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
     t.datetime "updated_at", null: false
     t.integer "status"
     t.text "message"
+    t.string "housing_type"
+    t.boolean "have_pets"
+    t.text "experience"
+    t.string "preferred_pet"
+    t.string "full_name"
+    t.string "email"
+    t.string "phone_number"
+    t.text "address"
     t.index ["animal_id"], name: "index_adoption_requests_on_animal_id"
     t.index ["shelter_id"], name: "index_adoption_requests_on_shelter_id"
     t.index ["user_id"], name: "index_adoption_requests_on_user_id"
@@ -159,6 +172,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
     t.float "latitude"
     t.float "longitude"
     t.bigint "user_id"
+    t.boolean "approved"
   end
 
   create_table "user_roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -178,6 +192,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "full_name"
+    t.string "phone_number"
+    t.text "address"
+    t.boolean "approved"
+    t.string "role"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -190,7 +209,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_02_104839) do
     t.text "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_volunteer_applications_on_user_id"
   end
 

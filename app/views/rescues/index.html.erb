@@ -15,7 +15,10 @@
     </div>
 </div>
 </header>
-
+<!-- Button to Add New Rescue -->
+  <div class="text-center mt-4">
+    <%= link_to 'Add New Rescue', new_rescue_path, class: 'btn btn-primary' %>
+  </div>
 <!-- Recent Rescues -->
 <section class="py-5">
     <div class="container">
@@ -32,6 +35,7 @@
                                 <div class="card-body">
                                     <h3 class="h5 card-title"><%= "#{rescuee.category.name} #{rescuee.breed.name}" %></h3>
                                     <p class="card-text"><%= rescuee.description %></p>
+                                    <p class="card-text text-primary"><%= rescuee.status %></p>
                                     <p class="card-text"><small class="text-muted"><%= "#{rescuee.age} #{rescuee.size}" %></small></p>
                                     <span class="badge bg-success-soft text-success"><%= rescuee.location %></span>
                                 </div>

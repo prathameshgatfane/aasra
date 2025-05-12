@@ -1,0 +1,2 @@
+module Shelters::DashboardHelper
+end

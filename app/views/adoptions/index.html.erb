@@ -1,3 +1,39 @@
+<!-- My Adoption Requests -->
+<!-- My Adoption Requests -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-4">My Adoption Requests</h2>
+
+    <% if @adoption_requests.any? %>
+      <div class="row g-4 justify-content-center">
+        <% @adoption_requests.each do |req| %>
+          <div class="col-md-6 col-lg-4 fade-in-up">
+            <div class="card shadow-lg p-4 h-100 rounded-xl border-left-teal">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-teal fw-bold mb-0">
+                  <i class="bi bi-paw-fill me-2"></i><%= req.animal.name %>
+                </h5>
+                <span class="badge bg-orange text-white text-capitalize">
+                  <%= req.status %>
+                </span>
+              </div>
+
+              <p class="mb-2"><strong>Housing:</strong> <%= req.housing_type %></p>
+              <p class="mb-2"><strong>Have Pets?</strong> <%= req.have_pets ? "Yes" : "No" %></p>
+              <p class="mb-2"><strong>Experience:</strong> <%= truncate(req.experience, length: 60) %></p>
+              <p class="mb-2"><strong>Preferred Pet:</strong> <%= truncate(req.preferred_pet, length: 60) %></p>
+              <p class="mb-0 text-muted small"><strong>Submitted:</strong> <%= req.created_at.strftime("%B %d, %Y") %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-center text-muted">You haven’t submitted any adoption requests yet.</p>
+    <% end %>
+  </div>
+</section>
+
+
 <!-- Filter Section -->
 <section id="filter-section" class="py-5">
   <div class="container">
@@ -6,39 +42,40 @@
     <%= form_with url: adoptions_path, method: :get, local: true do %>
       <div class="row g-3">
         <div class="col-md-3">
-          <%= select_tag :type, options_for_select([
-            ["Animal Type", ""],
-            ["Dog", "dog"],
-            ["Cat", "cat"],
-            ["Rabbit", "rabbit"],
-            ["Other", "other"]
-          ], selected: params[:type]), class: "form-select" %>
+          <%= select_tag :category_id,
+              options_from_collection_for_select(Category.all, :id, :name, params[:category_id]),
+              include_blank: "Animal Type",
+              class: "form-select" %>
         </div>
+
         <div class="col-md-3">
-          <%= select_tag :age, options_for_select([
-            ["Age", ""],
-            ["Baby", "baby"],
-            ["Young", "young"],
-            ["Adult", "adult"],
-            ["Senior", "senior"]
-          ], selected: params[:age]), class: "form-select" %>
+          <%= select_tag :breed_id,
+              options_from_collection_for_select(Breed.all, :id, :name, params[:breed_id]),
+              include_blank: "Breed",
+              class: "form-select" %>
         </div>
-        <div class="col-md-3">
-          <%= select_tag :gender, options_for_select([
-            ["Gender", ""],
-            ["Male", "male"],
-            ["Female", "female"]
-          ], selected: params[:gender]), class: "form-select" %>
+
+        <div class="col-md-2">
+          <%= select_tag :age,
+              options_for_select(Animal.ages.keys.map { |a| [a.titleize, a] }, params[:age]),
+              include_blank: "Age",
+              class: "form-select" %>
         </div>
-        <div class="col-md-3">
-          <%= select_tag :size, options_for_select([
-            ["Size", ""],
-            ["Small", "small"],
-            ["Medium", "medium"],
-            ["Large", "large"],
-            ["Extra Large", "extra_large"]
-          ], selected: params[:size]), class: "form-select" %>
+
+        <div class="col-md-2">
+          <%= select_tag :gender,
+              options_for_select(Animal.genders.keys.map { |g| [g.titleize, g] }, params[:gender]),
+              include_blank: "Gender",
+              class: "form-select" %>
         </div>
+
+        <div class="col-md-2">
+          <%= select_tag :size,
+              options_for_select(Animal.sizes.keys.map { |s| [s.titleize.gsub('_', ' '), s] }, params[:size]),
+              include_blank: "Size",
+              class: "form-select" %>
+        </div>
+
         <div class="col-12 text-center mt-3">
           <%= submit_tag "Search", class: "btn btn-teal px-4" %>
         </div>
@@ -47,82 +84,75 @@
   </div>
 </section>
 
-<!-- Animals Section -->
+<!-- Available Animals -->
 <section class="py-5 bg-light">
   <div class="container">
-    <section class="py-5 bg-white">
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="display-5 fw-bold text-dark">Available Animals</h2>
-          <p class="lead text-secondary mx-auto" style="max-width: 700px;">
-            These adorable friends are waiting for their forever homes. Could you be their perfect match?
-          </p>
-        </div>
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold text-dark">Available Animals</h2>
+      <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+        These adorable friends are waiting for their forever homes. Could you be their perfect match?
+      </p>
+    </div>
 
-        <div class="row g-4">
-          <% @animals.each do |animal| %>
-            <div class="col-md-6 col-lg-3">
-              <div class="card h-100 shadow-sm border-0 animal-card">
-                <div class="animal-image-container">
-                  <%= image_tag animal.image, alt: animal.name, class: "animal-image" if animal.image.present? %>
-                  <span class="badge badge-species position-absolute"><%= animal.category&.name || "Unknown" %></span>
+    <div class="row g-4">
+      <% @animals.each do |animal| %>
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 shadow-sm border-0 animal-card">
+            <div class="animal-image-container">
+              <%= image_tag animal.image, alt: animal.name, class: "animal-image" if animal.image.present? %>
+              <span class="badge badge-species position-absolute"><%= animal.category&.name || "Unknown" %></span>
+            </div>
+
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h3 class="h5 fw-semibold mb-0"><%= animal.name %></h3>
+                  <p class="text-secondary small mb-0"><%= animal.breed&.name || "Unknown" %></p>
                 </div>
+                <span class="badge border badge-gender"><%= animal.gender&.capitalize || "Unknown" %></span>
+              </div>
 
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                      <h3 class="h5 fw-semibold mb-0"><%= animal.name %></h3>
-                      <p class="text-secondary small mb-0"><%= animal.breed&.name || "Unknown" %></p>
-                    </div>
-                    <span class="badge border badge-gender"><%= animal.gender&.capitalize || "Unknown" %></span>
-                  </div>
+              <div class="d-flex align-items-center mt-3 text-secondary small">
+                <i class="bi bi-calendar me-2"></i><span><%= animal.age&.capitalize || "Unknown" %></span>
+              </div>
 
-                  <div class="d-flex align-items-center mt-3 text-secondary small">
-                    <i class="bi bi-calendar me-2"></i><span><%= animal.age&.capitalize || "Unknown" %></span>
-                  </div>
+              <div class="d-flex align-items-center mt-3 text-secondary small">
+                <i class="bi bi-arrows-angle-expand me-2"></i><span><%= animal.size&.capitalize&.gsub('_', ' ') || "Unknown" %></span>
+              </div>
 
-                  <div class="d-flex align-items-center mt-3 text-secondary small">
-                    <i class="bi bi-arrows-angle-expand me-2"></i><span><%= animal.size&.capitalize&.gsub('_', ' ') || "Unknown" %></span>
-                  </div>
+              <div class="d-flex align-items-center mt-1 text-secondary small">
+                <i class="bi bi-info-circle me-2"></i><span><%= animal.adoption_status&.capitalize || "Unknown" %></span>
+              </div>
 
-                  <div class="d-flex align-items-center mt-1 text-secondary small">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <span><%= animal.adoption_status&.to_s&.capitalize || "Unknown" %></span>
-                  </div>
+              <div class="d-flex align-items-center mt-1 text-secondary small">
+                <i class="bi bi-geo-alt me-2"></i><span><%= animal.shelter&.name || "Unknown" %></span>
+              </div>
 
-                  <div class="d-flex align-items-center mt-1 text-secondary small">
-                    <i class="bi bi-geo-alt me-2"></i>
-                    <span><%= animal.shelter&.name || "Unknown" %></span>
-                  </div>
-
-                  <% if animal.tags.any? %>
-                    <div class="d-flex flex-wrap mt-3">
-                      <% animal.tags.each do |tag| %>
-                        <span class="badge badge-tag"><%= tag %></span>
-                      <% end %>
-                    </div>
+              <% if animal.tags.any? %>
+                <div class="d-flex flex-wrap mt-3">
+                  <% animal.tags.each do |tag| %>
+                    <span class="badge badge-tag"><%= tag %></span>
                   <% end %>
                 </div>
+              <% end %>
+            </div>
 
-                <div class="card-footer bg-white border-top-0 pt-0">
-                  <div class="d-flex gap-2">
-                    <%= link_to "Request Adoption", new_adoption_path(animal_id: animal.id), class: "btn btn-teal text-white flex-grow-1" %>
-                    <button class="btn btn-outline-orange favorite-btn" data-id="<%= animal.id %>">
-                      <i class="bi bi-heart"></i>
-                    </button>
-                  </div>
-                </div>
+            <div class="card-footer bg-white border-top-0 pt-0">
+              <div class="d-flex gap-2">
+                <%= link_to "Request Adoption", new_animal_adoption_path(animal), class: "btn btn-teal text-white flex-grow-1" %>
+                <button class="btn btn-outline-orange favorite-btn" data-id="<%= animal.id %>">
+                  <i class="bi bi-heart"></i>
+                </button>
               </div>
             </div>
-          <% end %>
+          </div>
         </div>
+      <% end %>
+    </div>
 
-        <!-- Pagination -->
-        <div class="mt-4 d-flex justify-content-center">
-          <%= paginate @animals %>
-        </div>
-      </div>
-    </section>
+    <div class="mt-4 d-flex justify-content-center">
+      <%= paginate @animals %>
+    </div>
   </div>
 </section>
 
@@ -131,42 +161,24 @@
   <div class="container">
     <h2 class="text-center mb-5">The Adoption Process</h2>
     <div class="row g-4">
-      <div class="col-md-3">
-        <div class="card h-100 border-0 shadow-sm text-center">
-          <div class="card-body">
-            <div class="display-4 text-teal mb-3">1</div>
-            <h3 class="h5">Browse Available Pets</h3>
-            <p class="text-muted">Look through our available animals to find your perfect match.</p>
+      <% ["Browse Available Pets", "Submit Application", "Meet & Greet", "Take Home"].each_with_index do |step, index| %>
+        <div class="col-md-3">
+          <div class="card h-100 border-0 shadow-sm text-center">
+            <div class="card-body">
+              <div class="display-4 text-teal mb-3"><%= index + 1 %></div>
+              <h3 class="h5"><%= step %></h3>
+              <p class="text-muted">
+                <% case index
+                  when 0 then %>Look through our available animals to find your perfect match.<% 
+                  when 1 then %>Fill out our adoption application form with your information.<%
+                  when 2 then %>Schedule a visit to meet your potential new family member.<%
+                  when 3 then %>Complete the adoption process and welcome your pet home!<%
+                end %>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card h-100 border-0 shadow-sm text-center">
-          <div class="card-body">
-            <div class="display-4 text-teal mb-3">2</div>
-            <h3 class="h5">Submit Application</h3>
-            <p class="text-muted">Fill out our adoption application form with your information.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card h-100 border-0 shadow-sm text-center">
-          <div class="card-body">
-            <div class="display-4 text-teal mb-3">3</div>
-            <h3 class="h5">Meet & Greet</h3>
-            <p class="text-muted">Schedule a visit to meet your potential new family member.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card h-100 border-0 shadow-sm text-center">
-          <div class="card-body">
-            <div class="display-4 text-teal mb-3">4</div>
-            <h3 class="h5">Take Home</h3>
-            <p class="text-muted">Complete the adoption process and welcome your pet home!</p>
-          </div>
-        </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </section>

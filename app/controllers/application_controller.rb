@@ -1,12 +1,36 @@
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!
+  before_action :authenticate_user_unless_admin!
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
 
-  # Permit additional Devise sign-up params
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:role_name])
+    devise_parameter_sanitizer.permit(
+      :sign_up,
+      keys: [
+        :email,
+        :password,
+        :password_confirmation,
+        :full_name,
+        :phone_number,
+        :address,
+        { role_ids: [] }
+      ]
+    )
+    
+    devise_parameter_sanitizer.permit(
+      :account_update,
+      keys: [
+        :email,
+        :password,
+        :password_confirmation,
+        :current_password,
+        :full_name,
+        :phone_number,
+        :address,
+        { role_ids: [] }
+      ]
+    )
   end
 
   # Redirect users based on role after sign in
@@ -16,5 +40,9 @@ class ApplicationController < ActionController::Base
     else
       root_path
     end
+  end
+
+  def authenticate_user_unless_admin!
+    authenticate_user! unless request.path.start_with?("/admin")
   end
 end

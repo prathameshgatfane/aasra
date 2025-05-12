@@ -39,10 +39,6 @@
                                     <%= f.label :description, "Describe the Situation", class: 'form-label' %>
                                     <%= f.text_area :description, class: "form-control", rows: 4 %>
                                 </div>
-                                <div class="col-md-6">
-                                    <%= f.label :status, class: 'form-label' %>
-                                    <%= f.select :status, Rescue.statuses.keys.map { |k| [k.titleize, k] }, { prompt: "Select Status" }, { class: "form-select" } %>
-                                </div>
                                 <%= f.submit "Submit Rescue", class: "btn btn-primary" %>
                             </div>
                         <% end %>

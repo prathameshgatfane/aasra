@@ -1,6 +1,5 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  # Devise modules
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
@@ -8,14 +7,17 @@ class User < ApplicationRecord
   has_many :roles, through: :user_roles
   has_many :rescues
   has_many :adoption_requests
-  has_many :volunteer_applications  # ✅ Add this line
-  has_one :shelter  # Association with shelter
+  has_many :volunteer_applications
+  has_one :shelter
 
-  # Virtual attribute to capture role selection from form
+  accepts_nested_attributes_for :user_roles
+
+  # Virtual attribute for selecting role in form
   attr_accessor :role_name
 
-  after_create :assign_selected_or_default_role
+  before_save :check_role
 
+  # === Role helpers ===
   def has_role?(role_name)
     roles.exists?(name: role_name.to_s)
   end
@@ -24,22 +26,49 @@ class User < ApplicationRecord
     has_role?("shelter")
   end
 
-  private
+  def is_rescuer?
+    has_role?("rescuer")
+  end
 
-  def assign_selected_or_default_role
-    if role_name.present?
-      selected_role = Role.find_by(name: role_name)
-      self.roles << selected_role if selected_role
-    elsif roles.empty?
-      self.roles << Role.find_by(name: "adopter")
+  # Automatically assign role if not already present
+  def check_role
+    if role_name.present? && !has_role?(role_name)
+      self.roles << Role.find_by(name: role_name)
+    elsif self.roles.empty?
+      self.roles << Role.second # fallback default
     end
   end
 
-  def self.ransackable_associations(auth_object = nil)
-    ["roles", "user_roles"]
+  # === Login restriction based on approval ===
+  def active_for_authentication?
+    super && approved_to_login?
   end
 
+  def inactive_message
+    is_shelter? && !approved? ? :not_approved : super
+  end
+
+  private
+
+  # Shelter login only if approved
+  def approved_to_login?
+    return true unless is_shelter? # Only shelter requires approval
+    approved?
+  end
+
+  # === Ransack configuration ===
   def self.ransackable_attributes(auth_object = nil)
-    ["created_at", "email", "encrypted_password", "id", "id_value", "remember_created_at", "reset_password_sent_at", "reset_password_token", "updated_at"]
+    %w[
+      id email full_name phone_number address approved
+      created_at updated_at
+      remember_created_at reset_password_token reset_password_sent_at
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      roles user_roles shelter rescues
+      adoption_requests volunteer_applications
+    ]
   end
 end

@@ -8,6 +8,8 @@ Breed.destroy_all
 Shelter.destroy_all
 Animal.destroy_all
 
+#admin portal user
+portal_admin_user = AdminUser.create!(email: 'admin_user@example.com', password: '12345678', password_confirmation: '12345678')
 # Roles
 roles = ["adopter", "rescuer", "volunteer", "donor", "admin"]
 roles.each do |role|
@@ -58,14 +60,26 @@ shelter_names = [
   "The Bark Side", "Fur Real Friends", "Pawsh Life Rescue", "Meow & Woof Inn", "Rescue Rangers Den"
 ]
 
+
+puts "Creating shelters..."
+
+shelter_names = [
+  "Paws & Hearts Shelter",
+  "Furry Haven",
+  "Wagging Tails Rescue",
+  "Whisker World",
+  "Snuggle Paws Sanctuary"
+]
+
 shelter_names.each do |name|
-  Shelter.find_or_create_by!(
-    name: name,
-    address: Faker::Address.full_address,
+  shelter = Shelter.find_or_initialize_by(name: name)
+  shelter.assign_attributes(
+    address: "#{Faker::Address.street_address}, #{Faker::Address.city}, #{Faker::Address.state_abbr}, USA",
     phone: Faker::PhoneNumber.phone_number,
     capacity: 150,
     user: admin_user
   )
+  shelter.save!
 end
 
 # Sample Animals
@@ -98,13 +112,26 @@ Animal.create!([
   }
 ])
 
-puts "Geocoding shelters..."
+puts "\nGeocoding shelters..."
+
 Shelter.find_each do |shelter|
-  shelter.geocode
   if shelter.latitude.nil? || shelter.longitude.nil?
-    puts "Failed to geocode: #{shelter.name} (#{shelter.address})"
+    puts "⚠️  Failed to geocode: #{shelter.name} (#{shelter.address})"
+    
+    # Retry with a fallback address
+    fallback_address = "#{Faker::Address.city}, #{Faker::Address.state_abbr}, USA"
+    shelter.update(address: fallback_address)
+    shelter.geocode
+
+    if shelter.latitude.nil?
+      puts "❌ Still failed: #{shelter.name} (#{shelter.address})"
+    else
+      shelter.save!
+      puts "✅ Fixed: #{shelter.name} => #{shelter.latitude}, #{shelter.longitude}"
+    end
+
+    sleep(1)  # Respect rate limits if using Nominatim
   else
-    shelter.save!
-    puts "Geocoded: #{shelter.name} => #{shelter.latitude}, #{shelter.longitude}"
+    puts "✅ Geocoded: #{shelter.name} => #{shelter.latitude}, #{shelter.longitude}"
   end
 end

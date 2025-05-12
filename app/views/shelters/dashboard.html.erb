@@ -1,5 +1,7 @@
 <h1 class="mb-4">Shelter Dashboard</h1>
 
+<!-- Adoption Requests -->
+<h2>Adoption Requests</h2>
 <% if @adoption_requests.any? %>
   <% @adoption_requests.each do |request| %>
     <div class="card mb-3">
@@ -8,12 +10,51 @@
         <p><strong>Requested by:</strong> <%= request.user.email %></p>
 
         <div class="d-flex gap-2">
-          <%= button_to "Accept", accept_adoption_request_path(request), method: :patch, class: "btn btn-success" %>
-          <%= button_to "Reject", reject_adoption_request_path(request), method: :patch, class: "btn btn-danger" %>
+          <%= button_to "Accept", shelter_adoption_request_path(request), method: :patch, params: { adoption_request: { status: 'accepted' } }, class: "btn btn-success" %>
+          <%= button_to "Reject", shelter_adoption_request_path(request), method: :patch, params: { adoption_request: { status: 'rejected' } }, class: "btn btn-danger" %>
         </div>
       </div>
     </div>
   <% end %>
 <% else %>
   <p>No adoption requests at the moment.</p>
+<% end %>
+
+<!-- Volunteer Applications -->
+<h2 class="mt-5">Volunteer Applications</h2>
+<% if @volunteer_applications.any? %>
+  <% @volunteer_applications.each do |application| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p><strong>Name:</strong> <%= application.full_name %></p>
+        <p><strong>Email:</strong> <%= application.email %></p>
+
+        <div class="d-flex gap-2">
+          <%= button_to "Accept", shelter_volunteer_application_path(application), method: :patch, params: { volunteer_application: { status: 'accepted' } }, class: "btn btn-success" %>
+          <%= button_to "Reject", shelter_volunteer_application_path(application), method: :patch, params: { volunteer_application: { status: 'rejected' } }, class: "btn btn-danger" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <p>No volunteer applications currently.</p>
+<% end %>
+
+<!-- Rescue Requests -->
+<h2 class="mt-5">Rescue Requests</h2>
+<% if @rescue_requests.any? %>
+  <% @rescue_requests.each do |rescue| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p><strong>Description:</strong> <%= rescue.description %></p>
+        <p><strong>Location:</strong> <%= rescue.location %></p>
+
+        <div class="d-flex gap-2">
+          <%= button_to "Mark Resolved", shelter_rescue_request_path(rescue), method: :patch, params: { rescue_request: { status: 'resolved' } }, class: "btn btn-success" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <p>No rescue requests currently.</p>
 <% end %>

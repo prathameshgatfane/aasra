@@ -3,34 +3,37 @@ class AdoptionsController < ApplicationController
   before_action :set_adoption, only: [:update_status, :accept, :reject]
   before_action :ensure_shelter, only: [:accept, :reject]
 
+  def new
+    @animal = Animal.find(params[:animal_id])
+    @adoption_request = AdoptionRequest.new
+  end
+
   def create
     @animal = Animal.find(params[:animal_id])
     @shelter = @animal.shelter
 
-    @request = current_user.adoption_requests.build(
-      animal: @animal,
-      message: params[:message],
-      status: :requested,
-      shelter_id: @shelter.id,
-      reason: params[:reason],
-      description: params[:description]
-    )
+    @adoption_request = current_user.adoption_requests.build(adoption_params)
+    @adoption_request.animal = @animal
+    @adoption_request.shelter = @shelter
+    @adoption_request.status = :requested
 
-    if @request.save
-      redirect_to root_path, notice: "Adoption request submitted!"
+    if @adoption_request.save
+      redirect_to adoptions_path, notice: "Adoption request submitted!"
     else
-      render :new
+      puts "❌ Adoption request save failed:"
+      puts @adoption_request.errors.full_messages
+      flash.now[:alert] = "Failed to submit adoption request."
+      render :new, status: :unprocessable_entity
     end
   end
 
   def index
-    Rails.logger.debug "PARAMS: #{params.inspect}"
 
+    @adoption_requests = current_user.adoption_requests.includes(:animal, :shelter)
     @animals = Animal.includes(:category, :breed, :shelter).where(adoption_status: 'available')
 
     if params[:type].present? && params[:type] != "Animal Type"
-      type_param = params[:type].to_s.downcase
-      @animals = @animals.joins(:category).where('LOWER(categories.name) = ?', type_param)
+      @animals = @animals.joins(:category).where('LOWER(categories.name) = ?', params[:type].downcase)
     end
 
     if params[:age].present? && Animal.ages.key?(params[:age].downcase)
@@ -46,19 +49,9 @@ class AdoptionsController < ApplicationController
       @animals = @animals.where(size: size_param) if Animal.sizes.key?(size_param)
     end
 
-    Rails.logger.debug "Final Animal Query: #{@animals.to_sql}"
-
     @animals = @animals.page(params[:page]).per(10)
   end
-
-  def new
-    # Optional: Initialize form if needed
-    def new
-      @animal = Animal.find(params[:animal_id])
-      @adoption_request = AdoptionRequest.new
-    end
-    
-  end
+  
 
   def shelter_dashboard
     @shelter = current_user.shelter
@@ -101,5 +94,9 @@ class AdoptionsController < ApplicationController
     unless current_user.has_role?(:shelter)
       redirect_to root_path, alert: "Access denied."
     end
+  end
+
+  def adoption_params
+    params.require(:adoption_request).permit(:housing_type, :have_pets, :experience, :preferred_pet)
   end
 end

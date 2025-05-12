@@ -1,48 +1,47 @@
 Rails.application.routes.draw do
-  # Volunteer Applications route (RESTful)
-  resources :volunteer_applications, only: [:create, :index]
-
-  # Static Pages
-  get 'contact', to: 'pages#contact'
-
-  get "privacy", to: "pages#privacy"
-  get "terms", to: "pages#terms"
-  get "volunteers", to: "pages#volunteers"  # 👈 Added this line
-
-  # Devise routes for Admin Users
+  # Devise for Admin and Users
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  # Root route
+  devise_for :users, controllers: {
+    sessions: 'users/sessions',
+    registrations: 'users/registrations'
+  }
+
+  # Root
   root to: "home#index"
 
-  # Devise routes for Normal Users
-  devise_for :users
-
-  # Shelter dashboard route - MUST COME BEFORE `resources :shelters`
-  get 'shelters/dashboard', to: 'shelters#dashboard', as: 'shelters_dashboard'
-
-  # Volunteer routes (NEW/CREATE for form functionality)
-  resources :volunteers, only: [:new, :create]
-  get 'volunteer', to: 'volunteers#new', as: 'volunteer'  # Form page at /volunteer
-
-  # Foster and Events
-  get 'fosters/index'
-  get 'events', to: 'events#index', as: 'events'
-
-  # Shelter search and animals
-  get '/shelters/near/:zip', to: 'shelters#near'
-  get '/shelters/:id/animals', to: 'shelters#animals'
-
-  # Animals and adoptions
-  resources :animals do
-    member do
-      patch :adopt
-    end
+  # Shelter Dashboard and Request Management
+  namespace :shelter do
+    get 'dashboard', to: 'dashboard#index', as: :dashboard
+    resources :adoption_requests, only: [:index, :update]
+    resources :volunteer_applications, only: [:index, :update]
+    resources :rescue_requests, only: [:index, :update]
   end
 
+  # Volunteer Applications
+  resources :volunteer_applications, only: [:create, :index]
+
+  # Volunteers
+  resources :volunteers, only: [:new, :create]
+  get 'volunteer', to: 'volunteers#new', as: 'volunteer'
+
+  # Static Pages
+  resources :fosters, only: [:index]
+  resources :events, only: [:index]
+
+  get 'contact', to: 'pages#contact'
+  get 'privacy', to: 'pages#privacy'
+  get 'terms', to: 'pages#terms'
+  get 'volunteers', to: 'pages#volunteers'
+  get 'my_adoption_requests', to: 'adoptions#my_requests', as: 'my_adoption_requests'
+
+  # Shelters public routes
+  get '/shelters/near/:zip', to: 'shelters#near'
+  get '/shelters/:id/animals', to: 'shelters#animals'
   resources :shelters, only: [:index, :show, :new]
 
+  # Categories & Breeds
   resources :categories, only: [:index] do
     member do
       get :breeds
@@ -50,19 +49,24 @@ Rails.application.routes.draw do
   end
   resources :breeds, only: [:index]
 
-  resources :adoptions, only: [:index, :create, :new] do
+  # Animals & Nested Adoptions
+  resources :animals do
     member do
-      patch :update_status
+      patch :adopt
     end
+    resources :adoptions, only: [:new, :create]
   end
 
-  resources :adoptions, only: [] do
+  # Adoptions
+  resources :adoptions, only: [:index] do
     member do
+      patch :update_status
       patch :accept_adoption_request, to: 'shelters#accept_adoption_request'
       patch :reject_adoption_request, to: 'shelters#reject_adoption_request'
     end
   end
 
+  # Rescues
   resources :rescues do
     member do
       patch :take
@@ -71,11 +75,14 @@ Rails.application.routes.draw do
     end
   end
 
+  # Donations
   resources :donations, only: [:index, :create]
   get '/donate', to: 'donations#index', as: :donate
 
+  # User Adoption Requests
   resources :user_adoption_requests, only: [:index, :show, :new, :create]
 
+  # Admin namespace
   namespace :admin do
     resources :adoption_requests
   end

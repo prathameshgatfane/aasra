@@ -1,23 +1,27 @@
 class AdminUser < ApplicationRecord
-       # Include default devise modules
        devise :database_authenticatable, 
-              :recoverable, :rememberable, :validatable
+              :recoverable, :rememberable, :validatable, 
+              :trackable # ← Include this if you're using tracking features
      
-       # Explicitly declare attribute type (required in Rails 7.2+)
        attribute :role, :integer
      
-       # Role enum
        enum role: { admin: 0, shelter: 1 }
      
-       # Define helper method for checking if user is a shelter
        def shelter?
          role == "shelter"
        end
      
-       # Ransackable attributes
+       # Ransack allowed attributes
        def self.ransackable_attributes(auth_object = nil)
-         ["created_at", "email", "encrypted_password", "id", "remember_created_at", 
-          "reset_password_sent_at", "reset_password_token", "updated_at"]
+         %w[
+           id email created_at updated_at
+           remember_created_at reset_password_token reset_password_sent_at
+           sign_in_count current_sign_in_at last_sign_in_at
+         ]
+       end
+     
+       def self.ransackable_associations(auth_object = nil)
+         []
        end
      end
      

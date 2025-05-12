@@ -16,6 +16,7 @@ class RescuesController < ApplicationController
   
     def create
       @rescue = current_user.rescues.build(rescue_params)
+      @rescue.status = 'open'
       if @rescue.save
         redirect_to rescues_path, notice: "Rescue reported successfully!"
       else

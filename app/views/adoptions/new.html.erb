@@ -12,31 +12,63 @@
     <div class="card shadow-sm p-4 border-0">
       <h2 class="mb-4 text-center text-teal">Request Adoption</h2>
 
-      <%= form_with(model: @adoption_request, url: adoptions_path, local: true) do |f| %>
+      <%= form_with url: animal_adoptions_path(@animal), model: @adoption_request, local: true do |f| %>
 
-        <%= f.hidden_field :animal_id, value: @animal.id %>
+        <!-- Error messages -->
+        <% if @adoption_request.errors.any? %>
+        <div class="alert alert-danger">
+          <h5>There were some problems with your submission:</h5>
+          <ul>
+            <% @adoption_request.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
 
-        <div class="row g-3">
-          <div class="col-md-6">
-            <%= f.label :reason, "Why do you want to adopt?", class: 'form-label' %>
-            <%= f.text_area :reason, class: "form-control", rows: 3 %>
-          </div>
+        <!-- Displaying current user info (already stored in DB) -->
+        <div class="mb-3">
+          <strong>Full Name:</strong> <%= current_user.full_name %><br>
+          <strong>Email:</strong> <%= current_user.email %><br>
+          <strong>Phone Number:</strong> <%= current_user.phone_number %><br>
+          <strong>Address:</strong> <%= current_user.address %>
+        </div>
 
-          <div class="col-md-6">
-            <%= f.label :description, "Tell us about your home (other pets, yard, kids, etc.)", class: 'form-label' %>
-            <%= f.text_area :description, class: "form-control", rows: 4 %>
-          </div>
+        <hr>
 
-          <!-- Optional: Hide or pre-set status -->
-          <%= f.hidden_field :status, value: "requested" %>
+        <!-- Housing type -->
+        <div class="mb-3">
+          <%= f.label :housing_type, "Housing Type", class: "form-label" %>
+          <%= f.select :housing_type, ["Own", "Rent"], {}, class: "form-select", required: true %>
+        </div>
 
-          <div class="text-center mt-4">
-            <%= f.submit "Submit Adoption Request", class: "btn btn-teal px-5 py-2" %>
-          </div>
+        <!-- Existing pets -->
+        <div class="mb-3">
+        <%= f.label :have_pets, "Do you currently have pets?" %><br>
+        <%= f.radio_button :have_pets, true %> Yes
+        <%= f.radio_button :have_pets, false %> No
+      </div>
+      
+
+        <!-- Experience -->
+        <div class="mb-3">
+          <%= f.label :experience, "Describe your experience with animals", class: "form-label" %>
+          <%= f.text_area :experience, class: "form-control", rows: 4, required: true %>
+        </div>
+
+        <!-- Preferred pet -->
+        <div class="mb-3">
+          <%= f.label :preferred_pet, "Which pet are you interested in?", class: "form-label" %>
+          <%= f.text_field :preferred_pet, class: "form-control", required: true %>
+        </div>
+
+        <!-- Submit button -->
+        <div class="mb-3 text-center">
+          <%= f.submit "Submit Application", class: "btn btn-teal px-4" %>
         </div>
 
       <% end %>
     </div>
   </div>
 </section>
-  

@@ -46,7 +46,7 @@
               <%= link_to '<i class="bi bi-heart me-1"></i> Adopt'.html_safe, adoptions_path, class: "nav-link d-flex align-items-center" %>
             </li>
             <li class="nav-item">
-              <%= link_to '<i class="bi bi-github me-1"></i> Rescue'.html_safe, new_rescue_path, class: "nav-link d-flex align-items-center" %>
+              <%= link_to '<i class="bi bi-github me-1"></i> Rescue'.html_safe, rescues_path, class: "nav-link d-flex align-items-center" %>
             </li>
             <li class="nav-item">
               <%= link_to '<i class="bi bi-people me-1"></i> Shelters'.html_safe, shelters_path, class: "nav-link d-flex align-items-center" %>
@@ -95,7 +95,7 @@
             <ul class="list-unstyled">
               <li class="mb-2"><%= link_to "Home", root_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
               <li class="mb-2"><%= link_to "Adopt", adoptions_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
-              <li class="mb-2"><%= link_to "Rescue", new_rescue_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
+              <li class="mb-2"><%= link_to "Rescue", rescues_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
               <li class="mb-2"><%= link_to "Shelters", shelters_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
               <li class="mb-2"><%= link_to "Donate", donate_path, class: "text-secondary text-decoration-none hover-text-teal" %></li>
             </ul>
@@ -105,7 +105,7 @@
           <h5 class="small text-uppercase fw-bold mb-3">Get Involved</h5>
           <ul class="list-unstyled">
             <li class="mb-2"><%= link_to 'Volunteers', volunteers_path, class: 'text-secondary text-decoration-none hover-text-teal' %></li>
-            <li class="mb-2"><%= link_to 'Foster', fosters_index_path, class: 'text-secondary text-decoration-none hover-text-teal' %></li>
+            <li class="mb-2"><%= link_to 'Foster', fosters_path, class: 'text-secondary text-decoration-none hover-text-teal' %></li>
             <li class="mb-2"><%= link_to 'Events', events_path, class: 'text-secondary text-decoration-none hover-text-teal' %></li>
           </ul>
         </div>
